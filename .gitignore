@@ -1,0 +1,50 @@
+# canonical: gitignore core + node/core @ f9e2742c1c172aa4602b1390e34c7d5eaa358583 — governed region, do not edit
+# Local build and test outputs.
+/.build/
+/dist/
+/coverage/
+/.cache/
+
+# Universal toolchain output suffix.
+*.out
+
+# Editor and operating-system state.
+.DS_Store
+.idea/
+
+# Never-commit secret-artifact guard (the client-side projection of the
+# server-side push boundary).
+.env
+.env.*
+.envrc
+.env*.local
+credentials
+credentials.*
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+*.keystore
+*.kdbx
+*.ppk
+*.gpg
+
+# node/core
+# Node.js/TypeScript toolchain artifacts.
+node_modules/
+.pnpm/
+.tsbuild/
+*.tsbuildinfo
+logs/
+out/
+
+# Auth-local registry credentials (secret-bearing, machine-local by policy).
+.npmrc
+auth.ini
+
+# -- project additions below this line --
+
+# Playwright MCP output surfaces written by the running workload.
+/.playwright-mcp/
+/output/

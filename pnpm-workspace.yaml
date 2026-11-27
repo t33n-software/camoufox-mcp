@@ -1,0 +1,272 @@
+###############################################################################
+# pnpm-workspace.yaml -- PNPM Supply-Chain Fortress (single-project)
+#
+# Surface contract:
+# - pnpm-workspace.yaml: repo-local non-sensitive PNPM policy
+# - package.json: exact Node.js + pnpm toolchain pinning
+# - .npmrc / auth.ini: auth-local tokens + certificates only
+#
+# IMPORTANT:
+# There is intentionally NO `packages:` key in this file.
+# In PNPM 11+, omitting `packages` means the root project is the only workspace
+# package. That is the correct single-project posture.
+###############################################################################
+
+########################################
+# Supply-chain fortress posture
+########################################
+
+# `minimumReleaseAge`
+# Simple: Delays the adoption of freshly published versions.
+# Details: The Fortress baseline is 7 days, not 24 hours. The goal is maximum
+# caution against compromised or retracted releases.
+minimumReleaseAge: 10080
+
+# `minimumReleaseAgeIgnoreMissingTime`
+# Simple: Disables fail-open on missing publish time metadata.
+# Details: If the registry does not supply a `time` value, resolution must
+# fail rather than silently losing the protective effect.
+minimumReleaseAgeIgnoreMissingTime: false
+
+# `minimumReleaseAgeStrict`
+# Simple: Enforces that PNPM aborts hard if versions are too young.
+minimumReleaseAgeStrict: true
+
+# `minimumReleaseAgeExclude`
+# Simple: Defines exceptions from the age gate.
+# Details: Explicitly empty — no convenience approvals for "hot" releases.
+minimumReleaseAgeExclude: []
+
+# `trustPolicy`
+# Simple: Blocks versions whose trust level has decreased compared to previous releases.
+trustPolicy: no-downgrade
+
+# `trustPolicyExclude`
+# Simple: Defines exceptions from the trust policy.
+# Details: Explicitly empty. Approved exceptions MUST use an exact version-pinned
+# selector and follow the dedicated trust-downgrade response-order owner.
+trustPolicyExclude: []
+
+# `blockExoticSubdeps`
+# Simple: Forbids Git or tarball sources in transitive dependencies.
+blockExoticSubdeps: true
+
+# `strictDepBuilds`
+# Simple: Requires explicit decisions for dependency build scripts.
+strictDepBuilds: true
+
+# `allowBuilds`
+# Simple: Defines the explicit allow/deny list for dependency build scripts.
+# Details: An empty object is the fail-closed starting point. Only packages that
+# actually ship lifecycle scripts appear here, each after a reviewed decision
+# recorded in the commit that adds it.
+allowBuilds: {}
+
+# `dangerouslyAllowAllBuilds`
+# Simple: Opens up blanket-wide build script execution.
+# Details: Always `false` in a Fortress architecture.
+dangerouslyAllowAllBuilds: false
+
+########################################
+# Registry and transport trust
+########################################
+
+# `registries`
+# Simple: Defines the approved registry destinations.
+# Details: Intentionally unset until the internal approved zone exists; no
+# placeholder value is carried. Until then the default public registry applies.
+# registries:
+#   default: <approved-zone>
+
+# `strictSsl`
+# Simple: Enforces TLS certificate verification for registry access.
+strictSsl: true
+
+########################################
+# Toolchain enforcement
+########################################
+
+# `nodeVersion`
+# Simple: Defines the root engine baseline for dependency checks.
+# Details: The control-plane engine-gate surface. It stays identical to the root
+# `package.json#devEngines.runtime.version` (single-project root runtime identity
+# rule); the productive runtime truth of the shipped workload lives in the
+# container base-image digest.
+nodeVersion: 26.13.0
+
+# `engineStrict`
+# Simple: Makes engine checks hard instead of advisory.
+engineStrict: true
+
+# `pmOnFail`
+# Simple: Aborts if the running pnpm version does not match exactly.
+# Details: The Fortress posture is `error`, not `download`.
+pmOnFail: error
+
+# `runtimeOnFail`
+# Simple: Aborts if a declared runtime surface is not present or matching.
+runtimeOnFail: error
+
+########################################
+# Lockfile and resolution discipline
+########################################
+
+# `lockfile`
+# Simple: Enforces the use of a lockfile.
+lockfile: true
+
+# `preferFrozenLockfile`
+# Simple: Prefers headless, unchanged installations.
+preferFrozenLockfile: true
+
+# `lockfileIncludeTarballUrl`
+# Simple: Saves tarball sources directly in the lockfile.
+lockfileIncludeTarballUrl: true
+
+# `resolutionMode`
+# Simple: Selects the PNPM resolution strategy.
+# Details: `time-based` reduces subdependency-hijacking risk.
+resolutionMode: time-based
+
+# `registrySupportsTimeField`
+# Simple: Enables optimized time metadata support for compatible registries.
+# Details: Stays `false` until an internal mirror provably delivers `time`.
+registrySupportsTimeField: false
+
+########################################
+# Manifest save policy
+########################################
+
+# `saveExact`
+# Simple: Saves newly added dependency versions as exact versions.
+saveExact: true
+
+# `savePrefix`
+# Simple: Defines the version prefix for newly saved specs.
+savePrefix: ""
+
+########################################
+# Dependency layout and anti-hoisting
+########################################
+
+# `nodeLinker`
+# Simple: Selects the installation model for Node dependencies.
+nodeLinker: isolated
+
+# `enableGlobalVirtualStore`
+# Simple: Prevents cross-project global virtual store usage.
+enableGlobalVirtualStore: false
+
+# `hoist`
+# Simple: Disables hidden hoisting globally.
+hoist: false
+
+# `hoistPattern`
+# Simple: Does not allow hoisting exceptions by default.
+hoistPattern: []
+
+# `publicHoistPattern`
+# Simple: Prevents root-visible hoisting for application code.
+publicHoistPattern: []
+
+# `shamefullyHoist`
+# Simple: Prevents blanket-wide public hoisting.
+shamefullyHoist: false
+
+# `virtualStoreDir`
+# Simple: Sets the project-local virtual store path.
+virtualStoreDir: .pnpm
+
+# `virtualStoreDirMaxLength`
+# Simple: Limits the length of directory names in the virtual store.
+virtualStoreDirMaxLength: 60
+
+# `verifyStoreIntegrity`
+# Simple: Verifies store contents before linking.
+verifyStoreIntegrity: true
+
+# `strictStorePkgContentCheck`
+# Simple: Verifies name, version, and content match in the store.
+strictStorePkgContentCheck: true
+
+########################################
+# Peer dependency governance
+########################################
+
+# `autoInstallPeers`
+# Simple: Prevents automatic installation of missing peers.
+autoInstallPeers: false
+
+# `strictPeerDependencies`
+# Simple: Makes peer conflicts hard instead of advisory.
+strictPeerDependencies: true
+
+# `peerDependencyRules`
+# Simple: Keeps blanket exceptions for peers closed.
+peerDependencyRules:
+  allowAny: []
+  allowedVersions: {}
+  ignoreMissing: []
+
+########################################
+# Graph repair and explicit policy
+########################################
+
+# `overrides`
+# Simple: Allows later, targeted exact transitive graph repair.
+# Details: Empty; any later filling follows the override-governance owner's
+# exact parent-edge selector form.
+overrides: {}
+
+# `packageExtensions`
+# Simple: Allows targeted manifest repairs for third-party packages.
+packageExtensions: {}
+
+# `allowedDeprecatedVersions`
+# Simple: Prevents blanket-wide suppression of deprecation warnings.
+allowedDeprecatedVersions: {}
+
+# `ignoreCompatibilityDb`
+# Simple: Disables implicit automatic manifest patches from the compatibility database.
+ignoreCompatibilityDb: true
+
+# `updateNotifier`
+# Simple: Disables automatic update notifications.
+updateNotifier: false
+
+########################################
+# Central version approval
+########################################
+
+# `catalog`
+# Simple: Central catalog of approved version states, even for single-project repos.
+# Details: Every runtime pin here is an individually reviewed state. The
+# Playwright pairing is deliberate: @playwright/mcp 0.0.78 is the newest release
+# whose bundled client the camoufox launcher peer range (<1.63) still accepts —
+# newer MCP releases ship Playwright 1.66 and the Juggler handshake answers
+# `428 Precondition Required`.
+catalog:
+  '@playwright/mcp': 0.0.78
+  '@types/node': 26.6.2
+  camoufox: 0.5.9
+  playwright-core: 1.62.1
+
+# `catalogMode`
+# Simple: Enforces that new dependencies cannot bypass the catalog.
+catalogMode: strict
+
+# `cleanupUnusedCatalogs`
+# Simple: Cleans up unused catalog entries.
+cleanupUnusedCatalogs: true
+
+########################################
+# Script safety
+########################################
+
+# `enablePrePostScripts`
+# Simple: Disables implicit `pre*`/`post*` hooks.
+enablePrePostScripts: false
+
+# `verifyDepsBeforeRun`
+# Simple: Enforces up-to-date dependencies before `pnpm run` and `pnpm exec`.
+verifyDepsBeforeRun: error

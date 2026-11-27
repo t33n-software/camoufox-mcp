@@ -1,0 +1,48 @@
+{
+  "name": "camoufox-mcp",
+  "version": "0.1.0",
+  "description": "Camoufox engine behind the official Playwright MCP tool contract: a ToolHive workload exposing the unchanged browser_* surface on an anti-detect Firefox build.",
+  "license": "SEE LICENSE IN LICENSE",
+  "author": "t33n Software",
+  "sideEffects": false,
+  "type": "module",
+  "homepage": "https://github.com/t33n-software/camoufox-mcp",
+  "bugs": "https://github.com/t33n-software/camoufox-mcp/issues",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/t33n-software/camoufox-mcp.git"
+  },
+  "directories": {
+    "doc": "docs"
+  },
+  "files": [
+    "Dockerfile",
+    "server.mjs",
+    "start.sh"
+  ],
+  "scripts": {
+    "fetch:browser": "camoufox fetch official/158.0.1-beta.41",
+    "start": "bash start.sh"
+  },
+  "dependencies": {
+    "@playwright/mcp": "catalog:",
+    "camoufox": "catalog:",
+    "playwright-core": "catalog:"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:"
+  },
+  "packageManager": "pnpm@12.17.0",
+  "devEngines": {
+    "runtime": {
+      "name": "node",
+      "version": "26.13.0",
+      "onFail": "error"
+    },
+    "packageManager": {
+      "name": "pnpm",
+      "version": "12.17.0",
+      "onFail": "error"
+    }
+  }
+}

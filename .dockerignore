@@ -1,0 +1,15 @@
+.git
+.gitignore
+.dockerignore
+Dockerfile
+node_modules
+.pnpm
+pnpm-lock.yaml.tmp
+LICENSE
+LICENSES
+license.lock.json
+license.values.json
+README.md
+CHANGELOG.md
+docs
+test
