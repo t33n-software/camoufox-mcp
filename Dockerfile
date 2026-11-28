@@ -4,7 +4,7 @@
 #   base image:     pinned by REPO DIGEST (never a mutable tag); Debian bookworm,
 #                   Node 26.13.0 — the engine gate the root manifest declares.
 #   node deps:      committed pnpm-lock.yaml installed with `pnpm install --frozen-lockfile`,
-#                   then `npm audit` and `npm audit signatures` as hard gates.
+#                   then `pnpm audit` as a hard gate.
 #   browser build:  fetched EXPLICITLY by the launcher's stamped pin
 #                   (official/158.0.1-beta.41). The installer verifies the GitHub
 #                   asset sha256 and the build asserts the sha8-stamped install
@@ -42,9 +42,13 @@ RUN pnpm install --frozen-lockfile --loglevel=error \
 
 # Pin identity (hard gate): install the stamped build, then prove the directory
 # carries the expected sha8 suffix — a wrong digest fails the build.
-RUN npx camoufox fetch official/158.0.1-beta.41 \
+# Executed through `pnpm exec`, not `npx`: the root manifest declares pnpm as the
+# package manager with onFail error, so npm-based execution is refused by the
+# project's own devEngines gate (EBADDEVENGINES). The npm global pnpm bootstrap
+# above runs outside the project directory and is therefore not covered by it.
+RUN pnpm exec camoufox fetch official/158.0.1-beta.41 \
  && ls -d /opt/camoufox-cache/camoufox/browsers/official/158.0.1-beta.41-3f2eb1d0 \
- && npx camoufox list
+ && pnpm exec camoufox list
 
 USER root
 RUN cd /srv/camoufox-mcp \
