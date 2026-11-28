@@ -113,10 +113,7 @@ switch is a surface choice, not a rewrite of prompts or allowlists.
 This surface is for interaction, end-to-end checks, rendered-DOM evaluation,
 network and console observation, and reproducible evidence. Driving it to read
 page content is a lane violation: content retrieval escalates through a fetch
-ladder instead. Those rules are organization governance, owned by the knowledge
-plane (`AI_WEB_ACQUISITION_AUTOMATION_REFERENCE_001`,
-`AI_WEB_ACQUISITION_STRATEGY_REFERENCE_001`), and are re-referenced here rather
-than restated.
+ladder instead, and this workload stays a fallback engine rather than a default.
 
 ## Repository layout
 
